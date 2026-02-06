@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>GRIPX AI – Smart Football Intelligence</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:Segoe UI,Arial;
+  background:radial-gradient(circle at top,#0a1a2f,#000814);
+  color:white;
+}
+.hidden{display:none}
+
+/* ---------- LANDING ---------- */
+nav{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:15px 30px;
+  background:rgba(0,0,0,.4);
+  backdrop-filter:blur(10px);
+}
+.logo{
+  font-size:28px;
+  font-weight:bold;
+  background:linear-gradient(90deg,#00ff99,#00ccff,#7b2cff);
+  -webkit-background-clip:text;
+  color:transparent;
+}
+nav button{
+  padding:10px 18px;
+  border:none;
+  border-radius:20px;
+  cursor:pointer;
+  background:linear-gradient(90deg,#00ff99,#00ccff,#7b2cff);
+  font-weight:bold;
+}
+.hero{
+  height:90vh;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  text-align:center;
+}
+.hero h1{
+  font-size:60px;
+}
+.hero span{
+  background:linear-gradient(90deg,#00ff99,#00ccff,#7b2cff);
+  -webkit-background-clip:text;
+  color:transparent;
+}
+.hero p{
+  max-width:700px;
+  color:#ccc;
+  font-size:18px;
+}
+
+/* ---------- LOGIN ---------- */
+#loginPage{
+  height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+}
+.login-box{
+  background:linear-gradient(135deg,#0f1b33,#080d1f);
+  padding:40px;
+  width:360px;
+  border-radius:25px;
+  text-align:center;
+  box-shadow:0 0 40px rgba(0,255,200,.4);
+}
+.login-box input,.login-box select,.login-box button{
+  width:100%;
+  padding:12px;
+  margin-top:12px;
+  border:none;
+  border-radius:10px;
+}
+.login-box button{
+  background:linear-gradient(90deg,#00ff99,#00ccff,#7b2cff);
+  font-weight:bold;
+  cursor:pointer;
+}
+.error{color:#ff4d4d}
+
+/* ---------- DASHBOARD ---------- */
+header{
+  padding:15px;
+  text-align:center;
+  background:linear-gradient(90deg,#00ff99,#00ccff,#7b2cff);
+  color:black;
+}
+.grid{
+  padding:25px;
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+  gap:20px;
+}
+.card{
+  background:linear-gradient(135deg,#11162a,#0c1022);
+  padding:20px;
+  border-radius:20px;
+  text-align:center;
+  box-shadow:0 0 25px rgba(0,255,200,.25);
+}
+.value{
+  font-size:28px;
+  color:#00ff99;
+  font-weight:bold;
+}
+.circle{
+  width:120px;
+  height:120px;
+  border-radius:50%;
+  background:conic-gradient(#00ff99,#00ccff,#7b2cff);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:30px;
+  margin:auto;
+}
+canvas{
+  width:100%;
+  height:150px;
+  background:#050a18;
+  border-radius:12px;
+}
+.center{
+  text-align:center;
+  padding:15px;
+}
+.center button{
+  padding:10px 20px;
+  border:none;
+  border-radius:20px;
+  cursor:pointer;
+  background:linear-gradient(90deg,#00ff99,#00ccff,#7b2cff);
+  font-weight:bold;
+}
+footer{
+  text-align:center;
+  color:#aaa;
+  padding:15px;
+}
+</style>
+</head>
+
+<body>
+
+<!-- LANDING -->
+<div id="landing">
+  <nav>
+    <div class="logo">GRIPX AI</div>
+    <button onclick="openLogin()">Login</button>
+  </nav>
+  <section class="hero">
+    <h1>The Football Stud <span>That Thinks</span></h1>
+    <p>
+      GRIPX AI is an AI-powered smart football footwear system that connects to
+      real sensors via Bluetooth to analyze player vitals, movement, and performance.
+    </p>
+    <button onclick="openLogin()">Get Started</button>
+  </section>
+</div>
+
+<!-- LOGIN -->
+<div id="loginPage" class="hidden">
+  <div class="login-box">
+    <h2>Login</h2>
+    <input id="user" placeholder="Username">
+    <input id="pass" type="password" placeholder="Password">
+    <button onclick="login()">LOGIN</button>
+    <div id="err" class="error"></div>
+  </div>
+</div>
+
+<!-- DASHBOARD -->
+<div id="dashboard" class="hidden">
+
+<header>
+  <h2>Player Performance Dashboard</h2>
+</header>
+
+<div class="center">
+  <button onclick="connectBluetooth()">🔵 Connect Bluetooth Sensor</button>
+  <p id="btStatus">🔴 No device connected</p>
+  <p id="wifiStatus">Checking network…</p>
+</div>
+
+<section class="grid">
+  <div class="card"><h3>❤️ Heart Rate</h3><div id="hr" class="value">--</div></div>
+  <div class="card"><h3>⚡ Stamina</h3><div id="st" class="value">--</div></div>
+  <div class="card"><h3>🏃 Speed</h3><div id="sp" class="value">--</div></div>
+  <div class="card"><h3>📏 Distance</h3><div id="ds" class="value">--</div></div>
+  <div class="card">
+    <h3>🤖 AI Score</h3>
+    <div class="circle" id="ai">--</div>
+  </div>
+  <div class="card">
+    <h3>📈 Speed Analytics</h3>
+    <canvas id="chart" width="300" height="150"></canvas>
+  </div>
+</section>
+
+<footer>© 2026 GRIPX AI • Where Football Meets Intelligence</footer>
+</div>
+
+<script>
+/* ---------- STATE ---------- */
+let ctx=null;
+let speedHistory=[];
+let distance=0;
+let deviceConnected=false;
+let bluetoothDevice=null;
+
+/* ---------- PAGE FLOW ---------- */
+function openLogin(){
+  landing.classList.add("hidden");
+  loginPage.classList.remove("hidden");
+}
+
+function login(){
+  if(user.value==="player" && pass.value==="gripx123"){
+    loginPage.classList.add("hidden");
+    dashboard.classList.remove("hidden");
+    ctx=document.getElementById("chart").getContext("2d");
+  } else {
+    err.innerText="Invalid credentials";
+  }
+}
+
+/* ---------- BLUETOOTH ---------- */
+async function connectBluetooth(){
+  if(!navigator.bluetooth){
+    alert("Web Bluetooth not supported on this browser");
+    return;
+  }
+  try{
+    bluetoothDevice = await navigator.bluetooth.requestDevice({
+      acceptAllDevices:true
+    });
+    deviceConnected=true;
+    btStatus.innerText="🟢 Connected to "+(bluetoothDevice.name||"Sensor");
+  }catch(e){
+    alert("Bluetooth connection cancelled");
+  }
+}
+
+/* ---------- WIFI STATUS ---------- */
+function updateNetwork(){
+  wifiStatus.innerText = navigator.onLine ? "🟢 Wi-Fi / Network Online" : "🔴 Offline";
+}
+window.addEventListener("online",updateNetwork);
+window.addEventListener("offline",updateNetwork);
+updateNetwork();
+
+/* ---------- LIVE LOOP ---------- */
+setInterval(()=>{
+  if(dashboard.classList.contains("hidden")) return;
+
+  if(!deviceConnected){
+    hr.innerText="Waiting for sensor…";
+    st.innerText="--";
+    sp.innerText="--";
+    ds.innerText="--";
+    ai.innerText="--";
+    return;
+  }
+
+  /* Demo values (replace with BLE data later) */
+  let heart=90+Math.random()*10;
+  let speed=10+Math.random()*3;
+  let aiScore=Math.floor(70+Math.random()*20);
+
+  distance+=speed*0.3;
+
+  hr.innerText=Math.floor(heart)+" bpm";
+  st.innerText="Live";
+  sp.innerText=speed.toFixed(1)+" km/h";
+  ds.innerText=distance.toFixed(1)+" m";
+  ai.innerText=aiScore;
+
+  speedHistory.push(speed);
+  if(speedHistory.length>20) speedHistory.shift();
+  drawChart();
+},1000);
+
+/* ---------- CHART ---------- */
+function drawChart(){
+  ctx.clearRect(0,0,300,150);
+  ctx.strokeStyle="#00ff99";
+  ctx.beginPath();
+  speedHistory.forEach((v,i)=>{
+    let x=i*15;
+    let y=150-v*6;
+    i?ctx.lineTo(x,y):ctx.moveTo(x,y);
+  });
+  ctx.stroke();
+}
+</script>
+
+</body>
+</html>
+
